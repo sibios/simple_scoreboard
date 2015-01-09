@@ -22,18 +22,17 @@ class Team
   property :name,   String, :required => true
   property :score,  Integer
 
-  has n, :solves
+  has n, :solves, "Solve"
 end
 
 class Solve
   include DataMapper::Resource
-  property :id,         Serial
+  property :id,     Serial
+  property :points, Integer
+  property :flag,   String
+  property :time,   DateTime
 
   belongs_to :team
-  has 1, :flag
-#  property :flag_name,  String
-#  property :team_name,  String
-#  property :points,     Integer
 end
 
 DataMapper.finalize
@@ -65,15 +64,13 @@ class ScoreBoard < Sinatra::Base
 
   #main page
   get "/" do
-    @solves = Solve.all
+    @solves = Solve.all(:order => [:time.desc], :limit => 5)
     @teams = Team.all(:order => [:score.desc])
     haml :index, :locals => { :submissions => @solves, :teams => @teams }
   end
 
   #submit a flag
   post "/flag" do
-    #halt(401, "Invalid captcha") unless captcha_pass?
-
     if Flag.count(:secret => params[:flag]) == 0
       flash[:error] = "Nope!  Keep working..."
       redirect to('/')
@@ -86,12 +83,15 @@ class ScoreBoard < Sinatra::Base
 
     @team = Team.first(:name => params[:team_name].downcase)
     @flag = Flag.first(:secret => params[:flag])
-    if Solve.count(:team_name => @team.name, :flag_name => @flag.secret) != 0
+
+    #if Solve.count(:team => @team, :flag => @flag) != 0
+    #if Solve.count(Team.all(:name => @team.name).solves.flag(:secret => @flag.secret)) != 0
+    if Solve.count(:team => @team, :flag => @flag.name) != 0
       flash[:error] = "That team has already solved that challenge."
       redirect to('/')
     end
 
-    @solve = Solve.new(:flag_name => @flag.secret, :team_name => @team.name, :points => @flag.value)
+    @solve = Solve.new(:team => @team, :flag => @flag.name, :points => @flag.value, :time => Time.now)
     @solve.save
     
     @team.score += @flag.value

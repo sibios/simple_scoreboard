@@ -1,13 +1,30 @@
 !!!
 %html
   %head
-    %title InFlightCTF
+    %title In-Flight CTF
     %link{ :href => "/css/bootstrap.min.css", :rel => "stylesheet" }
+    %link{ :href => "/css/custom.css", :rel => "stylesheet" }
   %body
     %script{ :src => "/js/jquery-1.11.2.min.js" }
     %script{ :src => "/js/bootstrap.min.js" }
-    %h1 InFlightCTF
-    %h3 Presented by dc503 and @sibios
+    %div{ :class => "page-header" }
+      %h1
+        %span{ :class => "glyphicon glyphicon-plane", "aria-hidden" => "true" }
+        In-Flight CTF
+        %span{ :class => "glyphicon glyphicon-flag", "aria-hidden" => "true" }
+        %br
+        %small Presented by dc503 and @sibios
+      %h4
+        DC503, Portland's InfoSec fight club, will be returning to activity in February at CtrlH.  Watch @dc503 and dc503.org for details! :D
+    %h3 Instructions
+    %div{ :class => "well" }
+
+    %h3 Recent Captures
+    %div{ :class => "well" }
+      - submissions.each do |capture|
+        %p<
+          %em #{capture.team.name}
+          solved "#{capture.flag}" for #{capture.points} points!
     %br
     %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#registrationModal" }
       %span{ :class => "glyphicon glyphicon-user", "aria-hidden" => "true" }
@@ -25,7 +42,7 @@
       %br
     = haml :_registration
     = haml :_submission
-    %h5 Submissions
+    %h3 Scores
     %table{ :class => "table table-striped" }
       %tr
         %th Place
@@ -40,3 +57,8 @@
           %td= team.name
           %td= team.score
           %td
+            - team.solves.each do |solution|
+              -if solution.points == 5
+                %img{ :src => "/imgs/moose.png", :alt => "#{solution.flag}", :id => "badge" }
+              - else
+                %img{ :src => "/imgs/flag.png", :alt => "#{solution.flag}", :id => "badge" }
