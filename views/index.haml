@@ -1,6 +1,37 @@
+!!!
 %html
   %head
     %title InFlightCTF
+    %link{ :href => "/css/bootstrap.min.css", :rel => "stylesheet" }
   %body
+    %script{ :src => "/js/jquery-1.11.2.min.js" }
+    %script{ :src => "/js/bootstrap.min.js" }
     %h1 InFlightCTF
     %h3 Presented by dc503 and @sibios
+    %br
+    %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#registrationModal" } Register
+    %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#flagModal" } Submit Flag
+    %br
+    %div{ :class => "modal fade", :id => "registrationModal", :tabindex => "-1", :role => "dialog", "aria-labelledby" => "registrationModalLabel", "aria-hidden" => "true" }
+      %div{ :class => "modal-dialog" }
+        %div{ :class => "modal-content" }
+          %div{ :class => "modal-header" }
+            %button{ :type => "button", :class => "close", "data-dismiss" => "modal", "aria-label" => "Close" }<
+              %span{ "aria-hidden" => "true" } &times;
+          %div{ :class => "modal-body" }
+            %form{ :method => "post", :action => "/register" }
+              %div{ :class => "form-group" }
+                %label{ :for => "inputTeamName" } Team Name
+                %input{ :type => "text", :class => "form-control", :id => "inputTeamName", :placeholder => "Enter Team Name", :name => "team_name" }
+              %button{ :type => "submit", :class => "btn btn-default"} Register
+          //%div{ :class => "modal-footer" }
+
+    %h5 Submissions
+    %table
+      %tr
+        %th Team
+        %th Points
+      - teams.each do |team|
+        %tr
+          %td= team.name
+          %td= team.score

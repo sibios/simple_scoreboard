@@ -4,4 +4,4 @@ require 'bundler'
 Bundler.require
 
 require './application.rb'
-run Store
+run ScoreBoard
