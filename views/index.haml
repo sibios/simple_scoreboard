@@ -7,58 +7,62 @@
   %body
     %script{ :src => "/js/jquery-1.11.2.min.js" }
     %script{ :src => "/js/bootstrap.min.js" }
-    %div{ :class => "page-header" }
-      %h1
-        %span{ :class => "glyphicon glyphicon-plane", "aria-hidden" => "true" }
-        In-Flight CTF
-        %span{ :class => "glyphicon glyphicon-flag", "aria-hidden" => "true" }
+    %div{ :id => "content" }
+      %div{ :class => "page-header" }
+        %h1
+          %span{ :class => "glyphicon glyphicon-plane", "aria-hidden" => "true" }
+          In-Flight CTF
+          %span{ :class => "glyphicon glyphicon-flag", "aria-hidden" => "true" }
+          %br
+          %small Presented by dc503 and @sibios
+        %h4
+          DC503, Portland's InfoSec fight club, will be returning in February at CtrlH.  Watch @dc503 and dc503.org for details! :D
+      %h3 Instructions
+      %div{ :class => "well" }
+
+      %h3 Recent Captures
+      %div{ :class => "well" }
+        - submissions.each do |capture|
+          %p<
+            %em #{capture.team.name}
+            solved "#{capture.flag}" for #{capture.points} points!
+      %div{ :id => "buttons" }
+        %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#registrationModal" }
+          %span{ :class => "glyphicon glyphicon-user", "aria-hidden" => "true" }
+          Register
+        %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#flagModal" }
+          %span{ :class => "glyphicon glyphicon-flag", "aria-hidden" => "true" }
+          Submit Flag
+
+      %br
+      - if flash[:notice]
+        %div{ :class => "alert alert-success", :role => "alert" }= flash[:notice]
         %br
-        %small Presented by dc503 and @sibios
-      %h4
-        DC503, Portland's InfoSec fight club, will be returning to activity in February at CtrlH.  Watch @dc503 and dc503.org for details! :D
-    %h3 Instructions
-    %div{ :class => "well" }
 
-    %h3 Recent Captures
-    %div{ :class => "well" }
-      - submissions.each do |capture|
-        %p<
-          %em #{capture.team.name}
-          solved "#{capture.flag}" for #{capture.points} points!
-    %br
-    %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#registrationModal" }
-      %span{ :class => "glyphicon glyphicon-user", "aria-hidden" => "true" }
-      Register
-    %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#flagModal" }
-      %span{ :class => "glyphicon glyphicon-flag", "aria-hidden" => "true" }
-      Submit Flag
-    %br
-    - if flash[:notice]
-      %div{ :class => "alert alert-success", :role => "alert" }= flash[:notice]
-      %br
-
-    - if flash[:error]
-      %div{ :class => "alert alert-danger", :role => "alert" }= flash[:error]
-      %br
-    = haml :_registration
-    = haml :_submission
-    %h3 Scores
-    %table{ :class => "table table-striped" }
-      %tr
-        %th Place
-        %th Team Name
-        %th Points
-        %th Badges
-      - place = 0
-      - teams.each do |team|
-      - place += 1
+      - if flash[:error]
+        %div{ :class => "alert alert-danger", :role => "alert" }= flash[:error]
+        %br
+        
+      = haml :_registration
+      = haml :_submission
+    
+      %h3 Scores
+      %table{ :class => "table table-striped" }
         %tr
-          %td= place
-          %td= team.name
-          %td= team.score
-          %td
-            - team.solves.each do |solution|
-              -if solution.points == 5
-                %img{ :src => "/imgs/moose.png", :alt => "#{solution.flag}", :id => "badge" }
-              - else
-                %img{ :src => "/imgs/flag.png", :alt => "#{solution.flag}", :id => "badge" }
+          %th Place
+          %th Team Name
+          %th Points
+          %th Badges
+        - place = 0
+        - teams.each do |team|
+        - place += 1
+          %tr
+            %td= place
+            %td= team.name
+            %td= team.score
+            %td
+              - team.solves.each do |solution|
+                -if solution.points == 5
+                  %img{ :src => "/imgs/moose.png", :alt => "#{solution.flag}", :id => "badge" }
+                - else
+                  %img{ :src => "/imgs/flag.png", :alt => "#{solution.flag}", :id => "badge" }
