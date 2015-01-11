@@ -46,14 +46,16 @@ def seed_flags
     return
   end
   puts "[+] Seeding flags..."
-  
-  @flag1 = Flag.new(:secret => "First", :value => 5, :name => "The First Flag")
-  @flag2 = Flag.new(:secret => "Second", :value => 8, :name => "Second Flag")
-  @flag3 = Flag.new(:secret => "Third", :value => 12, :name => "Final Test Flag")
-
-  @flag1.save
-  @flag2.save
-  @flag3.save
+ 
+  flags = YAML.load_file('flags.yml')
+  flags.each do |flag_data|
+    @flag = Flag.new(
+      :secret => flag_data[:secret],
+      :value => flag_data[:value],
+      :name => flag_data[:name]
+    )
+    @flag.save
+  end
 end
 
 seed_flags

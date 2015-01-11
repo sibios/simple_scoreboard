@@ -23,18 +23,18 @@
       %h3 Recent Captures
       %div{ :class => "well" }
         - submissions.each do |capture|
-          %p<
-            %em #{capture.team.name}
-            solved "#{capture.flag}" for #{capture.points} points!
-      %div{ :id => "buttons" }
-        %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#registrationModal" }
-          %span{ :class => "glyphicon glyphicon-user", "aria-hidden" => "true" }
-          Register
-        %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#flagModal" }
-          %span{ :class => "glyphicon glyphicon-flag", "aria-hidden" => "true" }
-          Submit Flag
+          %p #{capture.team.name} solved "#{capture.flag}" for #{capture.points} points!
 
       %br
+      %div{ :id => "buttons", :class => "container-fluid" }
+        %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#registrationModal", :id => "registration-button" }<
+          %span{ :class => "glyphicon glyphicon-user", "aria-hidden" => "true" }<
+          Register
+        %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#flagModal", :id => "flag-button" }<
+          %span{ :class => "glyphicon glyphicon-flag", "aria-hidden" => "true" }<
+          Submit Flag
+      %br
+
       - if flash[:notice]
         %div{ :class => "alert alert-success", :role => "alert" }= flash[:notice]
         %br
@@ -45,7 +45,7 @@
         
       = haml :_registration
       = haml :_submission
-    
+
       %h3 Scores
       %table{ :class => "table table-striped" }
         %tr

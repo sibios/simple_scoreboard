@@ -30,3 +30,8 @@ div.page-header{
 div#buttons{
   text-align: center;
 }
+
+div#spacer{
+  padding-right: 5em;
+  padding-left: 5em;
+}

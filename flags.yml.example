@@ -1,0 +1,10 @@
+---
+- :secret: First
+  :value: 10
+  :name: The First Flag
+- :secret: Second
+  :value: 12
+  :name: Second Flag
+- :secret: Third
+  :value: 15
+  :name: The Final Test Flag
