@@ -7,7 +7,7 @@ require 'dm-aggregates'
 require 'dm-validations'
 require 'dm-migrations'
 DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/database.db")
-
+DataMapper::Property::String.length(255)
 class Flag
   include DataMapper::Resource
   property :id,     Serial

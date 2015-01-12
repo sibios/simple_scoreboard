@@ -19,11 +19,16 @@
           DC503, Portland's InfoSec fight club, will be returning in February at CtrlH.  Watch @dc503 and dc503.org for details! :D
       %h3 Instructions
       %div{ :class => "well" }
+        = haml :_instructions
 
       %h3 Recent Captures
       %div{ :class => "well" }
-        - submissions.each do |capture|
-          %p #{capture.team.name} solved "#{capture.flag}" for #{capture.points} points!
+        - if submissions.length == 0
+          %p No cpatures yet.  Get to hacking!
+        - else
+          %ul
+          - submissions.each do |capture|
+            %li #{capture.team.name} solved "#{capture.flag}" for #{capture.points} points!
 
       %br
       %div{ :id => "buttons", :class => "container-fluid" }
@@ -66,3 +71,4 @@
                   %img{ :src => "/imgs/moose.png", :alt => "#{solution.flag}", :id => "badge" }
                 - else
                   %img{ :src => "/imgs/flag.png", :alt => "#{solution.flag}", :id => "badge" }
+      /DC503_FLAG{MooseyPh@7eAccepted!}
