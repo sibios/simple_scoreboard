@@ -1,7 +1,9 @@
 #!/usr/bin/ruby
 require 'sinatra'
 require 'sinatra/contrib'
+require 'rack'
 require 'rack-flash'
+require 'rack-protection'
 require 'dm-core'
 require 'dm-aggregates'
 require 'dm-validations'
@@ -116,8 +118,10 @@ class ScoreBoard < Sinatra::Base
       redirect to('/')
     end
 
-    if Team.count(:name => params[:team_name].downcase) == 0
-      @team = Team.new(:name => params[:team_name].downcase, :score => 0)
+    name = params[:team_name].downcase
+
+    if Team.count(:name => name) == 0
+      @team = Team.new(:name => name, :score => 0)
       @team.save
       flash[:notice] = "Team successfully registered! Get to hacking!"
       redirect to('/')

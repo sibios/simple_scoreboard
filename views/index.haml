@@ -4,6 +4,7 @@
     %title In-Flight CTF
     %link{ :href => "/css/bootstrap.min.css", :rel => "stylesheet" }
     %link{ :href => "/css/custom.css", :rel => "stylesheet" }
+    %meta{ "http-equiv" => "refresh", :content => "300" }
   %body
     %script{ :src => "/js/jquery-1.11.2.min.js" }
     %script{ :src => "/js/bootstrap.min.js" }
@@ -28,7 +29,8 @@
         - else
           %ul
           - submissions.each do |capture|
-            %li #{capture.team.name} solved "#{capture.flag}" for #{capture.points} points!
+            %li<
+              & #{capture.team.name} solved "#{capture.flag}" for #{capture.points} points!
 
       %br
       %div{ :id => "buttons", :class => "container-fluid" }
@@ -63,7 +65,8 @@
         - place += 1
           %tr
             %td= place
-            %td= team.name
+            %td<
+              &= team.name
             %td= team.score
             %td
               - team.solves.each do |solution|
