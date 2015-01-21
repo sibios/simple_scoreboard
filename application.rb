@@ -4,67 +4,43 @@ require 'sinatra/contrib'
 require 'rack'
 require 'rack-flash'
 require 'rack-protection'
-require 'dm-core'
-require 'dm-aggregates'
-require 'dm-validations'
-require 'dm-migrations'
-DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/database.db")
-DataMapper::Property::String.length(255)
-class Flag
-  include DataMapper::Resource
-  property :id,     Serial
-  property :secret, String
-  property :value,  Integer
-  property :name,   String
-end
 
-class Team
-  include DataMapper::Resource
-  property :id,     Serial
-  property :name,   String, :required => true
-  property :score,  Integer
-
-  has n, :solves, "Solve"
-end
-
-class Solve
-  include DataMapper::Resource
-  property :id,     Serial
-  property :points, Integer
-  property :flag,   String
-  property :time,   DateTime
-
-  belongs_to :team
-end
-
-DataMapper.finalize
-Flag.auto_upgrade!
-Team.auto_upgrade!
-Solve.auto_upgrade!
-
-def seed_flags
-  unless Flag.count == 0
-    puts "[-] Skipping Seeding..."
-    return
-  end
-  puts "[+] Seeding flags..."
- 
-  flags = YAML.load_file('flags.yml')
-  flags.each do |flag_data|
-    @flag = Flag.new(
-      :secret => flag_data[:secret],
-      :value => flag_data[:value],
-      :name => flag_data[:name]
-    )
-    @flag.save
-  end
-end
+require './model.rb'
 
 seed_flags
 
 class ScoreBoard < Sinatra::Base
   enable :sessions
   use Rack::Flash, :accessorize => [:notice, :error]
+
+  #config warden for auth
+  use Warden::Manager do |config|
+    config.serialize_into_session{ |team| team.id }
+    config.serialize_from_session{ |id| Team.get(id) }
+    config.scope_defaults :default, strategies: [:password], action: '/signup'
+    config.failure_app = self
+  end
+
+  Warden::Manager.before_failure do |env,opts|
+    env['REQUEST_METHOD'] = 'POST'
+  end
+
+  Warden::Strategies.add(:password) do
+    def valid?
+      params['team']['name'] && params['team']['password']
+    end
+
+    def authenticate!
+      team = Team.first(:name => params['team']['name'])
+
+      if team.nil?
+        fail!("Failed to login as that team")
+      elsif team.authenticate(params['team']['password'])
+        success!(team)
+      else
+        fail!("Failed to login as that team")
+      end
+  end
 
   #main page
   get "/" do
