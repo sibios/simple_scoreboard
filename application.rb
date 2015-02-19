@@ -27,19 +27,20 @@ class ScoreBoard < Sinatra::Base
 
   Warden::Strategies.add(:password) do
     def valid?
-      params['team']['name'] && params['team']['password']
+      params['team_name'] && params['password']
     end
 
     def authenticate!
-      team = Team.first(:name => params['team']['name'])
+      team = Team.first(:name => params['team_name'])
 
       if team.nil?
         fail!("Failed to login as that team")
-      elsif team.authenticate(params['team']['password'])
+      elsif team.authenticate(params['password'])
         success!(team)
       else
         fail!("Failed to login as that team")
       end
+    end
   end
 
   #main page
@@ -47,6 +48,31 @@ class ScoreBoard < Sinatra::Base
     @solves = Solve.all(:order => [:time.desc], :limit => 5)
     @teams = Team.all(:order => [:score.desc])
     haml :index, :locals => { :submissions => @solves, :teams => @teams }
+  end
+
+  #provide a view for auth
+  get "/login" do
+    haml :login
+  end
+
+  #API end-point for login creds
+  post "/login" do
+    env['warden'].authenticate!
+    flash[:notice] = env['warden'].message
+
+    if session[:return_to].nil?
+      redirect to('/')
+    else
+      redirect session[:return_to]
+    end
+  end
+
+  #terminate the user's session
+  get "/logout" do
+    env['warden'].raw_session.inspect
+    env['warden'].logout
+    flash[:notice] = "Logged out"
+    redirect to('/')
   end
 
   #submit a flag
@@ -83,11 +109,15 @@ class ScoreBoard < Sinatra::Base
 
   #register a team
   get "/register" do
-    redirect to('/')
+    haml :register
   end
 
   post "/register" do
     #halt(401, "Invalid captcha") unless captcha_pass?
+    if params[:password] != params[:password_confirm]
+      flash[:error] = "Passwords do not match!"
+      redirect to('/register')
+    end
 
     if Team.count >= 25
       flash[:error] = "Over capacity!  No new teams are being accepted. :("
@@ -97,7 +127,7 @@ class ScoreBoard < Sinatra::Base
     name = params[:team_name].downcase
 
     if Team.count(:name => name) == 0
-      @team = Team.new(:name => name, :score => 0)
+      @team = Team.new(:name => name, :score => 0, :password => params[:password])
       @team.save
       flash[:notice] = "Team successfully registered! Get to hacking!"
       redirect to('/')
