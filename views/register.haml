@@ -1,0 +1,17 @@
+!!!
+%html
+  %head
+    %title Login
+  %body
+    %p= flash[:error]
+    %form{ :action => "/register", :method => "post"}
+      %label{ :for => "team_name" } Team Name:
+      %input{ :id => "team_name", :name => "team_name", :type => "text" }
+      %br
+      %label{ :for => "password" } Password:
+      %input{ :id => "password", :name => "password", :type => "password" }
+      %br
+      %label{ :for => "password_confirm" } Retype Password: 
+      %input{ :id => "password_confirm", :name => "password_confirm", :type => "password" }
+      %br
+      %input{ :type => "submit", :value => "Login" }
