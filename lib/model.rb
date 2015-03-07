@@ -2,6 +2,7 @@ require 'dm-core'
 require 'dm-aggregates'
 require 'dm-validations'
 require 'dm-migrations'
+require 'dm-types'
 require 'bcrypt'
 
 DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/database.db")
@@ -17,6 +18,7 @@ end
 
 class Team
   include DataMapper::Resource
+#  include BCrypt
 
   property :id,       Serial, :key => true
   property :name,     String, :required => true
@@ -52,7 +54,7 @@ def seed_flags
   end
   puts "[+] Seeding flags..."
  
-  flags = YAML.load_file('flags.yml')
+  flags = YAML.load_file('./conf/flags.yml')
   flags.each do |flag_data|
     @flag = Flag.new(
       :secret => flag_data[:secret],

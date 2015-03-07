@@ -3,5 +3,5 @@ require 'bundler'
 
 Bundler.require
 
-require './application.rb'
+require './lib/application.rb'
 run ScoreBoard
