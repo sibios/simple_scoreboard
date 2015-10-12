@@ -4,6 +4,7 @@ require 'dm-validations'
 require 'dm-migrations'
 require 'dm-types'
 require 'bcrypt'
+require 'openssl'
 
 DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/database.db")
 DataMapper::Property::String.length(255)
@@ -18,7 +19,6 @@ end
 
 class Team
   include DataMapper::Resource
-#  include BCrypt
 
   property :id,       Serial, :key => true
   property :name,     String, :required => true
@@ -56,8 +56,10 @@ def seed_flags
  
   flags = YAML.load_file('./conf/flags.yml')
   flags.each do |flag_data|
+    sha = OpenSSL::Digest.new('sha256')
+    sha.update(flag_data[:secret])
     @flag = Flag.new(
-      :secret => flag_data[:secret],
+      :secret => sha.hexdigest,
       :value => flag_data[:value],
       :name => flag_data[:name]
     )
@@ -65,3 +67,17 @@ def seed_flags
   end
 end
 
+def add_admin
+  begin
+    admin_pass = YAML.load_file('./conf/config.yml')
+    admin_pass = admin_pass["admin_password"]
+  end
+
+  puts "[+] Creating admin user..."
+  @admin = Team.new(
+    :name => "admin",
+    :password => admin_pass,
+    :score => -1
+  )
+  @admin.save
+end

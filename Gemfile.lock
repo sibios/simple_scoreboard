@@ -93,7 +93,6 @@ DEPENDENCIES
   bcrypt
   data_mapper
   dm-sqlite-adapter
-  dm-types
   haml
   rack-flash3
   sinatra

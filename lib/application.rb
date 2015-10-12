@@ -4,10 +4,10 @@ require 'sinatra/contrib'
 require 'rack'
 require 'rack-flash'
 require 'rack-protection'
+require 'openssl'
+require 'haml'
 
-require './model.rb'
-
-seed_flags
+require './lib/model.rb'
 
 class ScoreBoard < Sinatra::Base
   enable :sessions
@@ -43,11 +43,23 @@ class ScoreBoard < Sinatra::Base
     end
   end
 
-  #main page
+  configure do
+    set :static => true
+    set :public_dir => "#{settings.root}/../public"
+    set :views => "#{settings.root}/../views"
+  end
+
+  #main page - public
   get "/" do
+    redirect to('/dashboard') unless env['warden'].nil?
+    redirect to('/dashboard') unless env['warden'].user.empty?
+    haml :index
+  end
+
+  get "/dashboard" do
     @solves = Solve.all(:order => [:time.desc], :limit => 5)
     @teams = Team.all(:order => [:score.desc])
-    haml :index, :locals => { :submissions => @solves, :teams => @teams }
+    haml :dashboard, :locals => { :submissions => @solves, :teams => @teams }, :layout => false
   end
 
   #provide a view for auth
@@ -73,38 +85,6 @@ class ScoreBoard < Sinatra::Base
     env['warden'].logout
     flash[:notice] = "Logged out"
     redirect to('/')
-  end
-
-  #submit a flag
-  post "/flag" do
-    if Flag.count(:secret => params[:flag]) == 0
-      flash[:error] = "Nope!  Keep working..."
-      redirect to('/')
-    end
-
-    if Team.count(:name => params[:team_name].downcase) == 0
-      flash[:error] = "That team doesn't exist..."
-      redirect to('/')
-    end
-
-    @team = Team.first(:name => params[:team_name].downcase)
-    @flag = Flag.first(:secret => params[:flag])
-
-    #if Solve.count(:team => @team, :flag => @flag) != 0
-    #if Solve.count(Team.all(:name => @team.name).solves.flag(:secret => @flag.secret)) != 0
-    if Solve.count(:team => @team, :flag => @flag.name) != 0
-      flash[:error] = "That team has already solved that challenge."
-      redirect to('/')
-    end
-
-    @solve = Solve.new(:team => @team, :flag => @flag.name, :points => @flag.value, :time => Time.now)
-    @solve.save
-    
-    @team.score += @flag.value
-    @team.save
-    
-    flash[:notice] = "Woot woot!  You got #{@flag.value} points!"
-    redirect to("/")
   end
 
   #register a team
@@ -136,4 +116,39 @@ class ScoreBoard < Sinatra::Base
       redirect to('/register')
     end
   end
+  
+  #submit a flag
+  post "/flag" do
+    digest = OpenSSL::Digest.new('sha256')
+    digest.update(params[:flag])
+    hash = digest.hexdigest()
+
+    if Flag.count(:secret => hash) == 0
+      flash[:error] = "Nope!  Keep working..."
+      redirect to('/')
+    end
+
+    if Team.count(:name => params[:team_name].downcase) == 0
+      flash[:error] = "That team doesn't exist..."
+      redirect to('/')
+    end
+
+    @team = Team.first(:name => params[:team_name].downcase)
+    @flag = Flag.first(:secret => hash)
+
+    if Solve.count(:team => @team, :flag => @flag.name) != 0
+      flash[:error] = "That team has already solved that challenge."
+      redirect to('/')
+    end
+
+    @solve = Solve.new(:team => @team, :flag => @flag.name, :points => @flag.value, :time => Time.now)
+    @solve.save
+    
+    @team.score += @flag.value
+    @team.save
+    
+    flash[:notice] = "Woot woot!  You got #{@flag.value} points!"
+    redirect to("/")
+  end
+
 end
