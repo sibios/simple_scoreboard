@@ -15,6 +15,7 @@ class Flag
   property :secret, String
   property :value,  Integer
   property :name,   String
+  property :active, Boolean
 end
 
 class Team
@@ -61,7 +62,8 @@ def seed_flags
     @flag = Flag.new(
       :secret => sha.hexdigest,
       :value => flag_data[:value],
-      :name => flag_data[:name]
+      :name => flag_data[:name],
+      :active => flag_data[:active] || false      # assume disabled unless set otherwise
     )
     @flag.save
   end

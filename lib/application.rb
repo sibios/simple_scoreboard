@@ -49,17 +49,33 @@ class ScoreBoard < Sinatra::Base
     set :views => "#{settings.root}/../views"
   end
 
+  def authenticated?(warden)
+    return false if warden.nil?
+    return false if warden.user.nil?
+    return false if warden.user.empty?
+
+    return true
+  end
+
   #main page - public
   get "/" do
-    redirect to('/dashboard') unless env['warden'].nil?
-    redirect to('/dashboard') unless env['warden'].user.empty?
-    haml :index
+    #redirect to('/dashboard') unless env['warden'].nil?
+    #redirect to('/dashboard') unless env['warden'].user.empty?
+    #haml :index
+    @solves = Solve.all(:order => [:time.desc], :limit => 5)
+    @teams = Team.all(:order => [:score.desc])
+    
+    if authenticated?(env['warden'])
+      haml :_gameboard, :layout => :player_layout, :locals => { :submissions => @solves, :teams => @teams }
+    else
+      haml :_dashboard, :locals => { :submissions => @solves, :teams => @teams }
+    end
   end
 
   get "/dashboard" do
     @solves = Solve.all(:order => [:time.desc], :limit => 5)
     @teams = Team.all(:order => [:score.desc])
-    haml :dashboard, :locals => { :submissions => @solves, :teams => @teams }, :layout => false
+    haml :_dashboard, :locals => { :submissions => @solves, :teams => @teams }
   end
 
   #provide a view for auth
@@ -88,12 +104,28 @@ class ScoreBoard < Sinatra::Base
   end
 
   #register a team
+  # only if not authenticated
   get "/register" do
-    haml :register
+    redirect to('/') if authenticated?(env['warden'])
+
+    haml :_registration, :locals => { :path => request.path_info }
   end
 
+  # only if not authenticated
   post "/register" do
-    #halt(401, "Invalid captcha") unless captcha_pass?
+    redirect to('/') if authenticated?(env['warden'])
+
+    if params[:team_name] == ""
+      flash[:error] = "Really, dude? Pick a team name!"
+      redirect to('/register')
+    end
+
+    if params[:password] == ""
+      flash[:error] = "Really, dude? Use a password."
+      redirect to('/register')
+    end
+
+    #confirm matching passwords
     if params[:password] != params[:password_confirm]
       flash[:error] = "Passwords do not match!"
       redirect to('/register')
@@ -118,6 +150,7 @@ class ScoreBoard < Sinatra::Base
   end
   
   #submit a flag
+  #   only available to authenticated users
   post "/flag" do
     digest = OpenSSL::Digest.new('sha256')
     digest.update(params[:flag])
@@ -136,6 +169,12 @@ class ScoreBoard < Sinatra::Base
     @team = Team.first(:name => params[:team_name].downcase)
     @flag = Flag.first(:secret => hash)
 
+    unless @flag.active
+      # valid team had a valid flag, but challenge wasn't active yet...
+      flash[:error] = "Nope!  Keep working..."
+      redirect to('/')
+    end
+
     if Solve.count(:team => @team, :flag => @flag.name) != 0
       flash[:error] = "That team has already solved that challenge."
       redirect to('/')
@@ -149,6 +188,14 @@ class ScoreBoard < Sinatra::Base
     
     flash[:notice] = "Woot woot!  You got #{@flag.value} points!"
     redirect to("/")
+  end
+
+  # Admin functionality
+  #   must be authenticated, must be Admin
+  get "/admin" do
+    env['warden'].authenticate!
+    @user = env['warden'].user
+    haml :admin
   end
 
 end

@@ -2,9 +2,12 @@
 - :secret: First
   :value: 10
   :name: The First Flag
+  :active: true
 - :secret: Second
   :value: 12
   :name: Second Flag
+  :active: false
 - :secret: Third
   :value: 15
   :name: The Final Test Flag
+  :active: false

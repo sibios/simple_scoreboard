@@ -1,0 +1,49 @@
+!!!
+%html
+  %head
+    %title In-Flight CTF
+    %link{ :href => "/css/bootstrap.min.css", :rel => "stylesheet" }
+    %link{ :href => "/css/custom.css", :rel => "stylesheet" }
+    %meta{ "http-equiv" => "refresh", :content => "300" }
+  %body
+    %script{ :src => "/js/jquery-1.11.2.min.js" }
+    %script{ :src => "/js/bootstrap.min.js" }
+    %div{ :id => "content" }
+      %div{ :class => "page-header" }
+        %h1
+          %span{ :class => "glyphicon glyphicon-plane", "aria-hidden" => "true" }
+          In-Flight CTF
+          %span{ :class => "glyphicon glyphicon-flag", "aria-hidden" => "true" }
+          %br
+          %small Presented by dc503 and @sibios
+        %h4
+          DC503, Portland's InfoSec fight club, will be returning in February at CtrlH.  Watch @dc503 and dc503.org for details! :D
+      %div{ :id => "buttons", :class => "container-fluid" }
+        %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#rulesModal", :id => "login-button" }<
+          %span{ :class => "glyphicon glyphicon-book", "aria-hidden" => "true" }<
+          Rules
+        %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#dashboardModal", :id => "dashboard-button" }<
+          %span{ :class => "glyphicon glyphicon-info-sign", "aria-hidden" => "true" }<
+          Standings
+        %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#flagModal", :id => "flag-button" }<
+          %span{ :class => "glyphicon glyphicon-flag", "aria-hidden" => "true" }<
+          Submit Flag
+        %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "", :id => "logout-button" }<
+          %span{ :class => "glyphicon glyphicon-off", "aria-hidden" => "true" }<
+          Logout
+      %br
+
+      - if flash[:notice]
+        %div{ :class => "alert alert-success", :role => "alert" }= flash[:notice]
+        %br
+
+      - if flash[:error]
+        %div{ :class => "alert alert-danger", :role => "alert" }= flash[:error]
+        %br
+      
+      - if locals[:path] == "/register"
+        %script{ :type => "text/javascript" }
+          $(window).load(function(){ $('#registrationModal').modal('show'); });
+
+      %h1 You are a Player
+      =yield

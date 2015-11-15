@@ -14,6 +14,20 @@ img#badge{
   width: 2em;
 }
 
+img.flag{
+  background-image: url('/imgs/flag.png');
+  background-repeat: no-repeat;
+}
+
+img.nonflag{
+  background-image: url('/imgs/moose.png');
+  background-repeat: no-repeat;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+}
+
 div#content{
   margin-left: 20em;
   margin-right: 20em;
