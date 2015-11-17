@@ -25,7 +25,7 @@
         %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#loginModal", :id => "login-button" }<
           %span{ :class => "glyphicon glyphicon-home", "aria-hidden" => "true" }<
           Login
-        %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#rulesModal", :id => "login-button" }<
+        %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#instructionModal", :id => "login-button" }<
           %span{ :class => "glyphicon glyphicon-book", "aria-hidden" => "true" }<
           Rules
       %br
@@ -35,6 +35,8 @@
         %br
 
       = haml :_registration
+      = haml :_login
+      = haml :_instructions
 
       - if locals[:path] == "/register"
         %script{ :type => "text/javascript" }

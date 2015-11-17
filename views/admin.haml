@@ -1,0 +1,17 @@
+%h1 Greetz Admin
+%div
+  %ul{ :class => "nav nav-tabs", :roles => "tablist" }
+    %li{ :role => "presentation", :class => "active" }
+      %a{ :href => "#challenges", "aria-controls" => "challenges", :role => "tab", "data-toggle" => "tab" } Challenges
+    %li{ :role => "presentaiton" }
+      %a{ :href => "#teams", "aria-controls" => "teams", :role => "tab", "data-toggle" => "tab" } Teams
+  %div{ :class => "tab-content" }
+    %div{ :role => "tabpanel", :class => "tabpane active", :id => "challenges" }
+      //flags go here
+      - flags.each do |flag|
+        %form{ :method => "post", :action => "/admin/flag/#{flag.id}" }
+          %div{ :class => "form-group" }
+            %label{ :for => "flag#{flag.id}InputName" } Name
+            %input{ :type => "text", :class => "form-control", :id => "flag#{flag.id}InputName", :placeholder => "#{flag.name}", :name => "flagname" }
+    %div{ :role => "tabpanel", :class => "tabpane", :id => "teams" }
+      //teams go here

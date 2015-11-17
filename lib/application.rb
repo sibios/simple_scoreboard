@@ -17,7 +17,7 @@ class ScoreBoard < Sinatra::Base
   use Warden::Manager do |config|
     config.serialize_into_session{ |team| team.id }
     config.serialize_from_session{ |id| Team.get(id) }
-    config.scope_defaults :default, strategies: [:password], action: '/signup'
+    config.scope_defaults :default, strategies: [:password], action: '/register'
     config.failure_app = self
   end
 
@@ -52,9 +52,14 @@ class ScoreBoard < Sinatra::Base
   def authenticated?(warden)
     return false if warden.nil?
     return false if warden.user.nil?
-    return false if warden.user.empty?
+    #return false if warden.user.empty?
 
     return true
+  end
+
+  def admin?(warden)
+    return false unless authenticated?(warden)
+    warden.user.name == "admin"
   end
 
   #main page - public
@@ -161,12 +166,12 @@ class ScoreBoard < Sinatra::Base
       redirect to('/')
     end
 
-    if Team.count(:name => params[:team_name].downcase) == 0
-      flash[:error] = "That team doesn't exist..."
-      redirect to('/')
-    end
-
-    @team = Team.first(:name => params[:team_name].downcase)
+    #if Team.count(:name => params[:team_name].downcase) == 0
+    #  flash[:error] = "That team doesn't exist..."
+    #  redirect to('/')
+    #end
+    #@team = Team.first(:name => params[:team_name].downcase)
+    @team = Team.first(:name => env['warden'].user.name.downcase)
     @flag = Flag.first(:secret => hash)
 
     unless @flag.active
@@ -193,9 +198,15 @@ class ScoreBoard < Sinatra::Base
   # Admin functionality
   #   must be authenticated, must be Admin
   get "/admin" do
-    env['warden'].authenticate!
-    @user = env['warden'].user
-    haml :admin
+    #env['warden'].authenticate!
+    redirect to('/') unless admin?(env['warden'])
+    @solves = Solve.all(:order => [:time.desc], :limit => 5)
+    @teams = Team.all(:order => [:score.desc])
+    @flags = Flag.all()
+    haml :admin, :layout => :player_layout, :locals => { :submissions => @solves, :teams => @teams, :flags => @flags }
   end
+
+  # POST /admin/team/#
+  # POST /admin/flag/#
 
 end

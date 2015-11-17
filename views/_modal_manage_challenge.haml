@@ -1,0 +1,25 @@
+%div{ :class => "modal fade", :id => "flag#{flag.id}ManageModal", :tabindex => "-1", :role => "dialog", "aria-labelledby" => "flag#{flag.id}ManageModalLabel", "aria-hidden" => "true" }
+  %div{ :class => "modal-dialog" }
+    %div{ :class => "modal-content" }
+      %div{ :class => "modal-header" }
+        %button{ :type => "button", :class => "close", "data-dismiss" => "modal", "aria-label" => "Close" }<
+          %span{ "aria-hidden" => "true" } &times;
+        %h4{ :class => "modal-title" } Modify Challenge #{flag.id}
+      %div{ :class => "modal-body" }
+        - if flash[:error]
+          %div{ :class => "alert alert-danger", :role => "alert" }= flash[:error]
+
+        %form{ :method => "post", :action => "/admin/flag/#{flag.id}" }
+          %div{ :class => "form-group" }
+            %label{ :for => "inputFlagName" } Name
+            %input{ :type => "text", :class => "form-control", :id => "inputFlagName", :placeholder => "#{flag.name}", :name => "name" }
+          %div{ :class => "form-group" }
+            %label{ :for => "inputFlagSecret" } Secret
+            %input{ :type => "text", :class => "form-control", :id => "inputFlagSecret", :placeholder => "#{flag.secret}", :name => "secret" }
+          %div{ :class => "form-group" }
+            %label{ :for => "inputFlagValue" } Value
+            %input{ :type => "text", :class => "form-control", :id => "inputFlagValue", :placeholder => "#{flag.value}", :name => "value" }
+          %div{ :class => "form-group" }
+            %label{ :for => "inputFlagActive" } Active
+            %input{ :type => "checkbox", :class => "form-control", :id => "inputFlagActive", :name => "active", :checked => "{flag.active}"}
+          %button{ :type => "submit", :class => "btn btn-default"} Save

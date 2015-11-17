@@ -17,6 +17,7 @@
     %th Badges
   - place = 0
   - teams.each do |team|
+  - next if team.name == "admin"
   - place += 1
     %tr
       %td= place
