@@ -242,7 +242,7 @@ class ScoreBoard < Sinatra::Base
 
     @team.save
     flash[:notice] = "Team \"#{@team.display}\" updated"
-    redirect to('/admin')
+    redirect to('/')
   end
 
   # POST /admin/flag/:id
@@ -269,8 +269,14 @@ class ScoreBoard < Sinatra::Base
       @flag.active = (params[:active] == "enable")
     end
 
+    if params[:category] != ""
+      @flag.category = :cat1 if (params[:category] == "Category 1")
+      @flag.category = :cat2 if (params[:category] == "Category 2")
+      @flag.category = :cat3 if (params[:category] == "Category 3")
+    end
+
     @flag.save
     flash[:notice] = "Flag \"#{@flag.name}\" updated"
-    redirect to('/admin')
+    redirect to('/')
   end
 end

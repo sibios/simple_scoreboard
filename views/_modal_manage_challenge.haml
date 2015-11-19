@@ -20,6 +20,14 @@
             %label{ :for => "inputFlagValue" } Value
             %input{ :type => "text", :class => "form-control", :id => "inputFlagValue", :placeholder => "#{flag.value}", :name => "value" }
           %div{ :class => "form-group" }
+            %label{ :for => "inputFlagCategory" } Category
+            %select{ :class => "form-control", :id => "inputFlagCategory", :name => "category" }
+              %option 
+              %option Category 1
+              %option Category 2
+              %option Category 3
+
+          %div{ :class => "form-group" }
             %label{ :for => "inputFlagActive" } Active
             %select{ :class => "form-control", :id => "inputFlagActive", :name => "active" }
               %option 
