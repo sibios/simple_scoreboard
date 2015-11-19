@@ -21,5 +21,8 @@
             %input{ :type => "text", :class => "form-control", :id => "inputFlagValue", :placeholder => "#{flag.value}", :name => "value" }
           %div{ :class => "form-group" }
             %label{ :for => "inputFlagActive" } Active
-            %input{ :type => "checkbox", :class => "form-control", :id => "inputFlagActive", :name => "active", :checked => "{flag.active}"}
+            %select{ :class => "form-control", :id => "inputFlagActive", :name => "active" }
+              %option 
+              %option enable
+              %option disable
           %button{ :type => "submit", :class => "btn btn-default"} Save

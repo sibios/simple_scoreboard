@@ -22,9 +22,11 @@ class Team
   include DataMapper::Resource
 
   property :id,       Serial, :key => true
-  property :name,     String, :required => true
+  property :name,     String, :required => true, :unique => true
+  property :display,  String
   property :password, BCryptHash
   property :score,    Integer
+  property :locked,   Boolean, :default => false
   
   has n, :solves, "Solve"
 
@@ -85,5 +87,5 @@ def add_admin
   @admin.save
 end
 
-seed_flags()
-add_admin()
+#seed_flags()
+#add_admin()

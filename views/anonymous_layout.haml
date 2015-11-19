@@ -29,10 +29,13 @@
           %span{ :class => "glyphicon glyphicon-book", "aria-hidden" => "true" }<
           Rules
       %br
-
+      - if flash[:error]
+        %div{ :class => "alert alert-danger", :role => "alert" }<
+          &= flash[:error]
       - if flash[:notice]
-        %div{ :class => "alert alert-success", :role => "alert" }= flash[:notice]
-        %br
+        %div{ :class => "alert alert-success", :role => "alert" }<
+          &= flash[:notice]
+      %br
 
       = haml :_registration
       = haml :_login

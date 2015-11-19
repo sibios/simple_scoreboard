@@ -6,9 +6,6 @@
           %span{ "aria-hidden" => "true" } &times;
         %h4{ :class => "modal-title" } Login
       %div{ :class => "modal-body" }
-        - if flash[:error]
-          %div{ :class => "alert alert-danger", :role => "alert" }= flash[:error]
-
         %form{ :method => "post", :action => "/login" }
           %div{ :class => "form-group" }
             %label{ :for => "inputTeamName" } Team Name

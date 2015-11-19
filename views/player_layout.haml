@@ -38,11 +38,13 @@
       = haml :_modal_dashboard, :locals => { :submissions => submissions, :teams => teams }
 
       - if flash[:notice]
-        %div{ :class => "alert alert-success", :role => "alert" }= flash[:notice]
+        %div{ :class => "alert alert-success", :role => "alert" }<
+          &= flash[:notice]
         %br
 
       - if flash[:error]
-        %div{ :class => "alert alert-danger", :role => "alert" }= flash[:error]
+        %div{ :class => "alert alert-danger", :role => "alert" }<
+          &= flash[:error]
         %br
       
       - if locals[:path] == "/register"

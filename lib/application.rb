@@ -11,18 +11,19 @@ require './lib/model.rb'
 
 class ScoreBoard < Sinatra::Base
   enable :sessions
-  use Rack::Flash, :accessorize => [:notice, :error]
+  use Rack::Flash, :accessorize => [:notice, :error], :sweep => true
 
   #config warden for auth
   use Warden::Manager do |config|
     config.serialize_into_session{ |team| team.id }
     config.serialize_from_session{ |id| Team.get(id) }
-    config.scope_defaults :default, strategies: [:password], action: '/register'
+    config.scope_defaults :default, strategies: [:password], action: '/'
     config.failure_app = self
   end
 
   Warden::Manager.before_failure do |env,opts|
-    env['REQUEST_METHOD'] = 'POST'
+    env['x-rack.flash'].error = 'lol nope'
+    env['REQUEST_METHOD'] = 'GET'
   end
 
   Warden::Strategies.add(:password) do
@@ -36,7 +37,7 @@ class ScoreBoard < Sinatra::Base
       if team.nil?
         fail!("Failed to login as that team")
       elsif team.authenticate(params['password'])
-        success!(team)
+        success!(team, "Successfully logged in.  Get to hacking!")
       else
         fail!("Failed to login as that team")
       end
@@ -52,11 +53,10 @@ class ScoreBoard < Sinatra::Base
   def authenticated?(warden)
     return false if warden.nil?
     return false if warden.user.nil?
-    #return false if warden.user.empty?
 
     return true
   end
-
+  
   def admin?(warden)
     return false unless authenticated?(warden)
     warden.user.name == "admin"
@@ -71,6 +71,13 @@ class ScoreBoard < Sinatra::Base
     @teams = Team.all(:order => [:score.desc])
     
     if authenticated?(env['warden'])
+      @user = Team.first(:name => env['warden'].user.name.downcase)
+      if @user.locked
+        env['warden'].raw_session.inspect
+        env['warden'].logout
+        flash[:error] = "You have been banned due to abuse."
+        redirect to('/')
+      end
       haml :_gameboard, :layout => :player_layout, :locals => { :submissions => @solves, :teams => @teams }
     else
       haml :_dashboard, :locals => { :submissions => @solves, :teams => @teams }
@@ -110,11 +117,11 @@ class ScoreBoard < Sinatra::Base
 
   #register a team
   # only if not authenticated
-  get "/register" do
-    redirect to('/') if authenticated?(env['warden'])
+  #get "/register" do
+  #  redirect to('/') if authenticated?(env['warden'])
 
-    haml :_registration, :locals => { :path => request.path_info }
-  end
+  #  haml :_registration, :locals => { :path => request.path_info }
+  #end
 
   # only if not authenticated
   post "/register" do
@@ -144,7 +151,7 @@ class ScoreBoard < Sinatra::Base
     name = params[:team_name].downcase
 
     if Team.count(:name => name) == 0
-      @team = Team.new(:name => name, :score => 0, :password => params[:password])
+      @team = Team.new(:name => name, :display => params[:team_name], :score => 0, :password => params[:password])
       @team.save
       flash[:notice] = "Team successfully registered! Get to hacking!"
       redirect to('/')
@@ -157,6 +164,17 @@ class ScoreBoard < Sinatra::Base
   #submit a flag
   #   only available to authenticated users
   post "/flag" do
+    redirect to('/') unless authenticated?(env['warden'])
+
+    @user = Team.first(:name => env['warden'].user.name.downcase)
+    if @user.locked
+      env['warden'].raw_session.inspect
+      env['warden'].logout
+      flash[:error] = "You have been banned due to abuse."
+      redirect to('/')
+    end
+
+
     digest = OpenSSL::Digest.new('sha256')
     digest.update(params[:flag])
     hash = digest.hexdigest()
@@ -198,7 +216,6 @@ class ScoreBoard < Sinatra::Base
   # Admin functionality
   #   must be authenticated, must be Admin
   get "/admin" do
-    #env['warden'].authenticate!
     redirect to('/') unless admin?(env['warden'])
     @solves = Solve.all(:order => [:time.desc], :limit => 5)
     @teams = Team.all(:order => [:score.desc])
@@ -206,7 +223,62 @@ class ScoreBoard < Sinatra::Base
     haml :admin, :layout => :player_layout, :locals => { :submissions => @solves, :teams => @teams, :flags => @flags }
   end
 
-  # POST /admin/team/#
-  # POST /admin/flag/#
+  # POST /admin/team/:id
+  post "/admin/team/:id" do
+    redirect to('/') unless admin?(env['warden'])
+    @team = Team.first(:id => params[:id])
+    if @team.name == "admin"
+      flash[:error] = "Changes to admin not allowed"
+      redirect to('/admin')
+    end
 
+    if params[:name] != ""
+      @team.display = params[:name]
+    end
+
+    if params[:lockout] != ""
+      @team.locked = (params[:lockout] == "enable")
+    end
+
+    if params[:score] != ""
+      @team.score = params[:score]
+    end
+
+    if params[:password] != ""
+      @team.password = params[:password]
+    end
+
+    @team.save
+    flash[:notice] = "Team \"#{@team.display}\" updated"
+    redirect to('/admin')
+  end
+
+  # POST /admin/flag/:id
+  post "/admin/flag/:id" do
+    redirect to('/') unless admin?(env['warden'])
+    @flag = Flag.first(:id => params[:id])
+
+    if params[:name] != ""
+      @flag.name = params[:name]
+    end
+
+    if params[:secret] != ""
+      digest = OpenSSL::Digest.new('sha256')
+      digest.update(params[:secret])
+      hash = digest.hexdigest()
+      @flag.hash = hash
+    end
+
+    if params[:value] != ""
+      @flag.value = params[:value]
+    end
+
+    if params[:active] != ""
+      @flag.active = (params[:active] == "enable")
+    end
+
+    @flag.save
+    flash[:notice] = "Flag \"#{@flag.name}\" updated"
+    redirect to('/admin')
+  end
 end
