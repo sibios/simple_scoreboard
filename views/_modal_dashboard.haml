@@ -6,6 +6,6 @@
           %span{ "aria-hidden" => "true" } &times;
         %h4{ :class => "modal-title" } Standings
       %div{ :class => "modal-body" }
-        = haml :_dashboard, :locals => { :submissions => submissions, :teams => teams }
+        = haml :_dashboard, :locals => { :teams => teams }
       %div{ :class => "modal-footer" }
         %button{ :type => "button", :class => "btn btn-defaul", "data-dismiss" => "modal" } Close

@@ -15,6 +15,7 @@ class Flag
   property :secret, String
   property :value,  Integer
   property :name,   String
+  property :category, Enum[ :cat1, :cat2, :cat3 ], :default => :cat1
   property :active, Boolean, :default => false
 end
 

@@ -28,22 +28,16 @@
         %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#instructionModal", :id => "login-button" }<
           %span{ :class => "glyphicon glyphicon-book", "aria-hidden" => "true" }<
           Rules
-      %br
+      
       - if flash[:error]
         %div{ :class => "alert alert-danger", :role => "alert" }<
           &= flash[:error]
       - if flash[:notice]
         %div{ :class => "alert alert-success", :role => "alert" }<
           &= flash[:notice]
-      %br
 
       = haml :_registration
       = haml :_login
       = haml :_instructions
 
-      - if locals[:path] == "/register"
-        %script{ :type => "text/javascript" }
-          $(window).load(function(){ $('#registrationModal').modal('show'); });
-
-      %h1 You are Anonymous
       =yield

@@ -1,13 +1,3 @@
-%h3 Recent Captures
-%div{ :class => "well" }
-  - if submissions.length == 0
-    %p No cpatures yet.  Get to hacking!
-  - else
-    %ul
-    - submissions.each do |capture|
-      %li<
-        & #{capture.team.name} solved "#{capture.flag}" for #{capture.points} points!
-
 %h3 Scores
 %table{ :class => "table table-striped" }
   %tr
@@ -21,8 +11,9 @@
   - place += 1
     %tr
       %td= place
-      %td<
-        &= team.display
+      %td
+        %a{ :role => "button", "data-toggle" => "modal", "data-target" => "#team#{team.id}ScoreModal" }<
+          &= team.display
       %td= team.score
       %td
         - team.solves.each do |solution|
@@ -30,3 +21,6 @@
             %img{ :src => "/imgs/moose.png", :alt => "#{solution.flag}", :id => "badge" , :class => "nonflag" }
           - else
             %img{ :src => "/imgs/flag.png", :alt => "#{solution.flag}", :id => "badge", :class => "flag" }
+
+- teams.each do |team|
+  = haml :_modal_team_solves, :locals => { :team => team }

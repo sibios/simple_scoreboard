@@ -1,0 +1,9 @@
+%h3 Recent Captures
+%div{ :class => "well" }
+  - if submissions.length == 0
+    %p No cpatures yet.  Get to hacking!
+  - else
+    %ul
+    - submissions.each do |capture|
+      %li<
+        & #{capture.team.name} solved "#{capture.flag}" for #{capture.points} points!

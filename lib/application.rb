@@ -64,9 +64,6 @@ class ScoreBoard < Sinatra::Base
 
   #main page - public
   get "/" do
-    #redirect to('/dashboard') unless env['warden'].nil?
-    #redirect to('/dashboard') unless env['warden'].user.empty?
-    #haml :index
     @solves = Solve.all(:order => [:time.desc], :limit => 5)
     @teams = Team.all(:order => [:score.desc])
     
@@ -78,7 +75,16 @@ class ScoreBoard < Sinatra::Base
         flash[:error] = "You have been banned due to abuse."
         redirect to('/')
       end
-      haml :_gameboard, :layout => :player_layout, :locals => { :submissions => @solves, :teams => @teams }
+
+      if admin?(env['warden'])
+        @flags = Flag.all()
+        @cat1 = Flag.all(:category => "cat1")
+        @cat2 = Flag.all(:category => "cat2")
+        @cat3 = Flag.all(:category => "cat3")
+        haml :admin, :layout => :player_layout, :locals => { :submissions => @solves, :teams => @teams, :flags => @flags, :flags_cat1 => @cat1, :flags_cat2 => @cat2, :flags_cat3 => @cat3 }
+      else
+        haml :player, :layout => :player_layout, :locals => { :submissions => @solves, :teams => @teams }
+      end
     else
       haml :_dashboard, :locals => { :submissions => @solves, :teams => @teams }
     end
@@ -114,14 +120,6 @@ class ScoreBoard < Sinatra::Base
     flash[:notice] = "Logged out"
     redirect to('/')
   end
-
-  #register a team
-  # only if not authenticated
-  #get "/register" do
-  #  redirect to('/') if authenticated?(env['warden'])
-
-  #  haml :_registration, :locals => { :path => request.path_info }
-  #end
 
   # only if not authenticated
   post "/register" do
@@ -174,7 +172,6 @@ class ScoreBoard < Sinatra::Base
       redirect to('/')
     end
 
-
     digest = OpenSSL::Digest.new('sha256')
     digest.update(params[:flag])
     hash = digest.hexdigest()
@@ -184,11 +181,6 @@ class ScoreBoard < Sinatra::Base
       redirect to('/')
     end
 
-    #if Team.count(:name => params[:team_name].downcase) == 0
-    #  flash[:error] = "That team doesn't exist..."
-    #  redirect to('/')
-    #end
-    #@team = Team.first(:name => params[:team_name].downcase)
     @team = Team.first(:name => env['warden'].user.name.downcase)
     @flag = Flag.first(:secret => hash)
 
