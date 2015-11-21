@@ -34,7 +34,7 @@ div#content{
   padding-left: 2em;
   padding-right: 2em;
   /*height: 120vh;*/
-  height: 100vh;
+  min-height: 100vh;
   background-color: rgba(256,256,256,0.9);
 }
 

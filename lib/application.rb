@@ -76,24 +76,45 @@ class ScoreBoard < Sinatra::Base
         redirect to('/')
       end
 
+      @flags = Flag.all()
+      @cat1 = Flag.all(:category => "cat1")
+      @cat2 = Flag.all(:category => "cat2")
+      @cat3 = Flag.all(:category => "cat3")
+      @cat4 = Flag.all(:category => "cat4")
+
+      @cat_map = {
+        :cat1 => "Pwnable",
+        :cat2 => "Reversing",
+        :cat3 => "Web",
+        :cat4 => "Trivia"
+      }
+      
       if admin?(env['warden'])
-        @flags = Flag.all()
-        @cat1 = Flag.all(:category => "cat1")
-        @cat2 = Flag.all(:category => "cat2")
-        @cat3 = Flag.all(:category => "cat3")
-        haml :admin, :layout => :player_layout, :locals => { :submissions => @solves, :teams => @teams, :flags => @flags, :flags_cat1 => @cat1, :flags_cat2 => @cat2, :flags_cat3 => @cat3 }
+        @team_table = [[],[],[]]
+        @team_counter = 0
+        @teams.each do |team|
+          next if team.name == "admin"
+          @team_table[(@team_counter % 3)] << team
+        end
+        #@team_table << @temp_row
+        haml :admin, :layout => :player_layout, :locals => {
+          :submissions => @solves, :teams => @teams, :flags => @flags, :flags_cat1 => @cat1,
+          :flags_cat2 => @cat2, :flags_cat3 => @cat3, :flags_cat4 => @cat4,
+          :user => @user, :team_table => @team_table, :category_map => @cat_map }
       else
-        haml :player, :layout => :player_layout, :locals => { :submissions => @solves, :teams => @teams }
+        @solves = []
+        @user.solves.each do |solve|
+          flag = Flag.first(:name => solve.name)
+          @solves << flag.id
+        end
+        haml :player, :layout => :player_layout, :locals => { 
+          :submissions => @solves, :teams => @teams, :user => @user, :flags_cat1 => @cat1,
+          :flags_cat2 => @cat2, :flags_cat3 => @cat3, :flags_cat4 => @cat4, :solves => @solves,
+          :flags => @flags, :category_map => @cat_map }
       end
     else
       haml :_dashboard, :locals => { :submissions => @solves, :teams => @teams }
     end
-  end
-
-  get "/dashboard" do
-    @solves = Solve.all(:order => [:time.desc], :limit => 5)
-    @teams = Team.all(:order => [:score.desc])
-    haml :_dashboard, :locals => { :submissions => @solves, :teams => @teams }
   end
 
   #provide a view for auth
@@ -273,6 +294,7 @@ class ScoreBoard < Sinatra::Base
       @flag.category = :cat1 if (params[:category] == "Category 1")
       @flag.category = :cat2 if (params[:category] == "Category 2")
       @flag.category = :cat3 if (params[:category] == "Category 3")
+      @flag.category = :cat4 if (params[:category] == "Category 4")
     end
 
     @flag.save

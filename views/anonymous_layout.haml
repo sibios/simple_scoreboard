@@ -30,9 +30,11 @@
           Rules
       
       - if flash[:error]
+        %br
         %div{ :class => "alert alert-danger", :role => "alert" }<
           &= flash[:error]
       - if flash[:notice]
+        %br
         %div{ :class => "alert alert-success", :role => "alert" }<
           &= flash[:notice]
 
@@ -40,4 +42,21 @@
       = haml :_login
       = haml :_instructions
 
-      =yield
+      %br
+      = haml :_recent, :locals => { :submissions => submissions }
+
+      %div{ :class => "container-fluid" }
+        %div{ :class => "row" }
+          %div{ :class => "panel with-nav-tabs panel-default" }
+            %div{ :class => "panel-heading" }
+              %ul{ :class => "nav nav-tabs", :role => "tablist" }
+                %li{ :role => "presentation", :class => "active" }<
+                  %a{ :href => "#capturesTab", "aria-controls" => "capturesTab", :role => "tab", "data-toggle" => "tab" }<
+                    %span{ :class => "glyphicon glyphicon-info-sign", "aria-hidden" => "true" }<
+                    Scoreboard
+            %div{ :class => "panel-body" }
+              %div{ :class => "tab-content" }
+                %div{ :role => "tabpanel", :class => "tab-pane active", :id => "capturesTab" }
+                  //captures go here
+                  = haml :_dashboard, :locals => { :teams => teams }
+

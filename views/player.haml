@@ -1,1 +1,25 @@
-%h1 Hi Player
+%div{ :class => "container-fluid" }
+  %div{ :class => "row" }
+    %div{ :class => "panel with-nav-tabs panel-default" }
+      %div{ :class => "panel-heading" }
+        %ul{ :class => "nav nav-tabs", :role => "tablist" }
+          %li{ :role => "presentation", :class => "active" }<
+            %a{ :href => "#challengesTab", "aria-controls" => "challengesTab", :role => "tab", "data-toggle" => "tab" }<
+              %span{ :class => "glyphicon glyphicon-tower", "aria-hidden" => "true" }<
+              Challenges
+          %li{ :role => "presentation" }<
+            %a{ :href => "#capturesTab", "aria-controls" => "capturesTab", :role => "tab", "data-toggle" => "tab" }<
+              %span{ :class => "glyphicon glyphicon-info-sign", "aria-hidden" => "true" }<
+              Scoreboard
+      %div{ :class => "panel-body" }
+        %div{ :class => "tab-content" }
+          %div{ :role => "tabpanel", :class => "tab-pane active", :id => "challengesTab" }
+            //flags go here
+            = haml :_gameboard, :locals => { :flags_cat1 => flags_cat1, :flags_cat2 => flags_cat2, :flags_cat3 => flags_cat3, :flags_cat4 => flags_cat4, :solves => solves, :category_map => category_map }
+          %div{ :role => "tabpanel", :class => "tab-pane", :id => "capturesTab" }
+            //captures go here
+            = haml :_dashboard, :locals => { :teams => teams }
+
+- flags.each do |flag|
+  -if flag.active
+    = haml :_modal_display_challenge, :locals => { :flag => flag, :category_map => category_map }

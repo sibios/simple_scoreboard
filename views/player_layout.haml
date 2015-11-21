@@ -22,12 +22,14 @@
         %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#instructionModal", :id => "login-button" }<
           %span{ :class => "glyphicon glyphicon-book", "aria-hidden" => "true" }<
           Rules
-        //%button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#dashboardModal", :id => "dashboard-button" }<
-        //  %span{ :class => "glyphicon glyphicon-info-sign", "aria-hidden" => "true" }<
-        //  Standings
-        %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#flagModal", :id => "flag-button" }<
-          %span{ :class => "glyphicon glyphicon-flag", "aria-hidden" => "true" }<
-          Submit Flag
+        - if user.name != "admin"
+          %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#flagModal", :id => "flag-button" }<
+            %span{ :class => "glyphicon glyphicon-flag", "aria-hidden" => "true" }<
+            Submit Flag
+        - else
+          %button{ :type => "button", :class => "btn btn-primary btn-lg", "data-toggle" => "modal", "data-target" => "#flagModal", :id => "flag-button", :disabled => "disabled" }<
+            %span{ :class => "glyphicon glyphicon-flag", "aria-hidden" => "true" }<
+            Submit Flag
         %a{ :href => "/logout", :class => "btn btn-primary btn-lg", :id => "logout-button" }<
           %span{ :class => "glyphicon glyphicon-off", "aria-hidden" => "true" }<
           Logout
@@ -36,13 +38,15 @@
       = haml :_instructions
 
       - if flash[:notice]
+        %br
         %div{ :class => "alert alert-success", :role => "alert" }<
           &= flash[:notice]
 
       - if flash[:error]
+        %br
         %div{ :class => "alert alert-danger", :role => "alert" }<
           &= flash[:error]
-
+      %br
       = haml :_recent, :locals => { :submissions => submissions }
 
       =yield

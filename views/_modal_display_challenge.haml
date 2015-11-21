@@ -1,0 +1,20 @@
+%div{ :class => "modal fade", :id => "flag#{flag.id}DisplayModal", :tabindex => "-1", :role => "dialog", "aria-labelledby" => "flag#{flag.id}DisplayModalLabel", "aria-hidden" => "true" }
+  %div{ :class => "modal-dialog" }
+    %div{ :class => "modal-content" }
+      %div{ :class => "modal-header" }
+        %button{ :type => "button", :class => "close", "data-dismiss" => "modal", "aria-label" => "Close" }<
+          %span{ "aria-hidden" => "true" } &times;
+        %h4{ :class => "modal-title" }<
+          &= flag.name
+      %div{ :class => "modal-body" }
+        // category
+        %h4< Category:
+        %p< #{category_map[flag.category]}
+        // value
+        %h4< Value:
+        %p< #{flag.value} points
+        // description
+        %div{ :class => "well" }
+          #{flag.description}
+      %div{ :class => "modal-footer" }
+        %button{ :type => "button", :class => "btn btn-default", "data-dismiss" => "modal" } Close

@@ -15,8 +15,9 @@ class Flag
   property :secret, String
   property :value,  Integer
   property :name,   String
-  property :category, Enum[ :cat1, :cat2, :cat3 ], :default => :cat1
+  property :category, Enum[ :cat1, :cat2, :cat3, :cat4 ], :default => :cat1
   property :active, Boolean, :default => false
+  property :description, String
 end
 
 class Team
@@ -65,8 +66,9 @@ def seed_flags
     @flag = Flag.new(
       :secret => sha.hexdigest,
       :value => flag_data[:value],
-      :name => flag_data[:name]
-      #:active => flag_data[:active]      # assume disabled unless set otherwise
+      :name => flag_data[:name],
+      :active => flag_data[:active],      # assume disabled unless set otherwise
+      :description => flag_data[:description]
     )
     (@flag.active = flag_data[:active]) unless flag_data[:active].nil?
     @flag.save

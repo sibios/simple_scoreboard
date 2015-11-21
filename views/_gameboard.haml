@@ -1,1 +1,55 @@
-%h2 Gameboard
+%div{ :class => "col-lg-3 col-md-3" }
+  %div{ :class => "panel panel-danger" }
+    %div{ :class => "panel-heading" }<
+      &= category_map[:cat1]
+    %div{ :class => "panel-body" }
+      - flags_cat1.each do |flag|
+        - if flag.active
+          - if solves.include?(flag.id)
+            %button{ :type => "button", :class => "btn btn-success btn-md btn-block", "data-toggle" => "modal", "data-target" => "#flag#{flag.id}DisplayModal", :id => "flag#{flag.id}-display-button" } #{flag.name[0..25]}
+          - else
+            %button{ :type => "button", :class => "btn btn-default btn-md btn-block", "data-toggle" => "modal", "data-target" => "#flag#{flag.id}DisplayModal", :id => "flag#{flag.id}-display-button" } #{flag.name[0..25]}
+        - else
+          %button{ :type => "button", :class => "btn btn-default btn-md btn-block", "data-toggle" => "modal", "data-target" => "#flag#{flag.id}DisplayModal", :id => "flag#{flag.id}-display-button", :disabled => "disabled" } #{flag.name[0..25]}
+
+%div{ :class => "col-lg-3 col-md-3" }
+  %div{ :class => "panel panel-info" }
+    %div{ :class => "panel-heading" }<
+      &= category_map[:cat2]
+    %div{ :class => "panel-body" }
+      - flags_cat2.each do |flag|
+        - if flag.active
+          - if solves.include?(flag.id)
+            %button{ :type => "button", :class => "btn btn-success btn-md btn-block", "data-toggle" => "modal", "data-target" => "#flag#{flag.id}DisplayModal", :id => "flag#{flag.id}-display-button" } #{flag.name[0..25]}
+          - else
+            %button{ :type => "button", :class => "btn btn-default btn-md btn-block", "data-toggle" => "modal", "data-target" => "#flag#{flag.id}DisplayModal", :id => "flag#{flag.id}-display-button" } #{flag.name[0..25]}
+        - else
+          %button{ :type => "button", :class => "btn btn-default btn-md btn-block", "data-toggle" => "modal", "data-target" => "#flag#{flag.id}DisplayModal", :id => "flag#{flag.id}-display-button", :disabled => "disabled" } #{flag.name[0..25]}
+
+%div{ :class => "col-lg-3 col-md-3" }
+  %div{ :class => "panel panel-warning" }
+    %div{ :class => "panel-heading" }<
+      &= category_map[:cat3]
+    %div{ :class => "panel-body" }
+      - flags_cat3.each do |flag|
+        - if flag.active
+          - if solves.include?(flag.id)
+            %button{ :type => "button", :class => "btn btn-success btn-md btn-block", "data-toggle" => "modal", "data-target" => "#flag#{flag.id}DisplayModal", :id => "flag#{flag.id}-display-button" } #{flag.name[0..25]}
+          - else
+            %button{ :type => "button", :class => "btn btn-default btn-md btn-block", "data-toggle" => "modal", "data-target" => "#flag#{flag.id}DisplayModal", :id => "flag#{flag.id}-display-button" } #{flag.name[0..25]}
+        - else
+          %button{ :type => "button", :class => "btn btn-default btn-md btn-block", "data-toggle" => "modal", "data-target" => "#flag#{flag.id}DisplayModal", :id => "flag#{flag.id}-display-button", :disabled => "disabled" } #{flag.name[0..25]}
+
+%div{ :class => "col-lg-3 col-md-3" }
+  %div{ :class => "panel panel-success" }
+    %div{ :class => "panel-heading" }<
+      &= category_map[:cat4]
+    %div{ :class => "panel-body" }
+      - flags_cat4.each do |flag|
+        - if flag.active
+          - if solves.include?(flag.id)
+            %button{ :type => "button", :class => "btn btn-success btn-md btn-block", "data-toggle" => "modal", "data-target" => "#flag#{flag.id}DisplayModal", :id => "flag#{flag.id}-display-button" } #{flag.name[0..25]}
+          - else
+            %button{ :type => "button", :class => "btn btn-default btn-md btn-block", "data-toggle" => "modal", "data-target" => "#flag#{flag.id}displayModal", :id => "flag#{flag.id}-display-button" } #{flag.name[0..25]}
+        - else
+          %button{ :type => "button", :class => "btn btn-danger btn-md btn-block", "data-toggle" => "modal", "data-target" => "#flag#{flag.id}DisplayModal", :id => "flag#{flag.id}-display-button", :disabled => "disabled" } #{flag.name[0..25]}
