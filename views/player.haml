@@ -11,6 +11,10 @@
             %a{ :href => "#capturesTab", "aria-controls" => "capturesTab", :role => "tab", "data-toggle" => "tab" }<
               %span{ :class => "glyphicon glyphicon-info-sign", "aria-hidden" => "true" }<
               Scoreboard
+          %li{ :role => "presentation" }<
+            %a{ :href => "#playerTab", "aria-controls" => "playerTab", :role => "tab", "data-toggle" => "tab" }<
+              %span{ :class => "glyphicon glyphicon-user", "aria-hidden" => "true" }<
+              &= user.name
       %div{ :class => "panel-body" }
         %div{ :class => "tab-content" }
           %div{ :role => "tabpanel", :class => "tab-pane active", :id => "challengesTab" }
@@ -19,6 +23,8 @@
           %div{ :role => "tabpanel", :class => "tab-pane", :id => "capturesTab" }
             //captures go here
             = haml :_dashboard, :locals => { :teams => teams }
+          %div{ :role => "tabpanel", :class => "tab-pane", :id => "playerTab" }
+            = haml :_team_solves, :locals => { :team => user }
 
 - flags.each do |flag|
   -if flag.active

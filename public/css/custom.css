@@ -14,7 +14,7 @@ img#badge{
   width: 2em;
 }
 
-img.flag{
+/*img.flag{
   background-image: url('/imgs/flag.png');
   background-repeat: no-repeat;
 }
@@ -26,7 +26,7 @@ img.nonflag{
   height: auto;
   margin: 0;
   padding: 0;
-}
+}*/
 
 div#content{
   margin-left: 20em;
@@ -60,4 +60,11 @@ div#spacer{
     display:inline-block;
     *display:inline; /* ie7 fix */
      zoom:1; /* hasLayout ie7 trigger */
+}
+
+div#messaging{
+  position: absolute;
+  top: 2em;
+  left: 25em;
+  right: 25em;
 }

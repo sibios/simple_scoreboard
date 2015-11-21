@@ -1,0 +1,14 @@
+%div{ :class => "panel panel-default" }
+  %div{ :class => "panel-heading" } Solves
+  %table{ :class => "table table-striped" }
+    %tr
+      %th Time
+      %th Flag
+      %th Points
+    - team.solves.each do |solve|
+      %tr
+        %td= solve.time
+        %td<
+          &= solve.flag
+        %td= solve.points
+

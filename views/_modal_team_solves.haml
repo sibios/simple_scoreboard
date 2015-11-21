@@ -7,18 +7,6 @@
         %h4{ :class => "modal-title" }<
           &= team.display
       %div{ :class => "modal-body" }
-        %div{ :class => "panel panel-default" }
-          %div{ :class => "panel-heading" } Solves
-          %table{ :class => "table table-striped" }
-            %tr
-              %th Time
-              %th Flag
-              %th Points
-            - team.solves.each do |solve|
-              %tr
-                %td= solve.time
-                %td<
-                  &= solve.flag
-                %td= solve.points
+        = haml :_team_solves, :locals => { :team => team }
       %div{ :class => "modal-footer" }
         %button{ :type => "button", :class => "btn btn-default", "data-dismiss" => "modal" } Close

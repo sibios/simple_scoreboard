@@ -102,14 +102,14 @@ class ScoreBoard < Sinatra::Base
           :flags_cat2 => @cat2, :flags_cat3 => @cat3, :flags_cat4 => @cat4,
           :user => @user, :team_table => @team_table, :category_map => @cat_map }
       else
-        @solves = []
+        @team_solves = []
         @user.solves.each do |solve|
-          flag = Flag.first(:name => solve.name)
-          @solves << flag.id
+          flag = Flag.first(:name => solve.flag)
+          @team_solves << flag.id
         end
         haml :player, :layout => :player_layout, :locals => { 
           :submissions => @solves, :teams => @teams, :user => @user, :flags_cat1 => @cat1,
-          :flags_cat2 => @cat2, :flags_cat3 => @cat3, :flags_cat4 => @cat4, :solves => @solves,
+          :flags_cat2 => @cat2, :flags_cat3 => @cat3, :flags_cat4 => @cat4, :solves => @team_solves,
           :flags => @flags, :category_map => @cat_map }
       end
     else
@@ -220,6 +220,7 @@ class ScoreBoard < Sinatra::Base
     @solve.save
     
     @team.score += @flag.value
+    #@team.solves << @solve
     @team.save
     
     flash[:notice] = "Woot woot!  You got #{@flag.value} points!"

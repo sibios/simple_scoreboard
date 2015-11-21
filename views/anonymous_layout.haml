@@ -8,6 +8,7 @@
   %body
     %script{ :src => "/js/jquery-1.11.2.min.js" }
     %script{ :src => "/js/bootstrap.min.js" }
+    %script{ :src => "/js/custom.js" }
     %div{ :id => "content" }
       %div{ :class => "page-header" }
         %h1
@@ -31,11 +32,15 @@
       
       - if flash[:error]
         %br
-        %div{ :class => "alert alert-danger", :role => "alert" }<
+        %div{ :class => "alert alert-danger alert-dismissable fade in", :role => "alert", :id => "messaging" }<
+          %button{ :type => "button", :class => "close", "data-dismiss" => "alert", "aria-label" => "Close" }
+            %span{ "aria-hidden" => "true" } &times;
           &= flash[:error]
       - if flash[:notice]
         %br
-        %div{ :class => "alert alert-success", :role => "alert" }<
+        %div{ :class => "alert alert-success alert-dismissable fade in", :role => "alert", :id => "messaging" }<
+          %button{ :type => "button", :class => "close", "data-dismiss" => "alert", "aria-label" => "Close" }
+            %span{ "aria-hidden" => "true" } &times;
           &= flash[:notice]
 
       = haml :_registration
