@@ -32,7 +32,7 @@ class ScoreBoard < Sinatra::Base
     end
 
     def authenticate!
-      team = Team.first(:name => params['team_name'])
+      team = Team.first(:name => params['team_name'].downcase)
 
       if team.nil?
         fail!("Failed to login as that team")
@@ -77,10 +77,10 @@ class ScoreBoard < Sinatra::Base
       end
 
       @flags = Flag.all()
-      @cat1 = Flag.all(:category => "cat1")
-      @cat2 = Flag.all(:category => "cat2")
-      @cat3 = Flag.all(:category => "cat3")
-      @cat4 = Flag.all(:category => "cat4")
+      @cat1 = Flag.all(:category => "cat1", :order => [:value.asc])
+      @cat2 = Flag.all(:category => "cat2", :order => [:value.asc])
+      @cat3 = Flag.all(:category => "cat3", :order => [:value.asc])
+      @cat4 = Flag.all(:category => "cat4", :order => [:value.asc])
 
       @cat_map = {
         :cat1 => "Pwnable",
@@ -220,7 +220,6 @@ class ScoreBoard < Sinatra::Base
     @solve.save
     
     @team.score += @flag.value
-    #@team.solves << @solve
     @team.save
     
     flash[:notice] = "Woot woot!  You got #{@flag.value} points!"
@@ -280,7 +279,7 @@ class ScoreBoard < Sinatra::Base
       digest = OpenSSL::Digest.new('sha256')
       digest.update(params[:secret])
       hash = digest.hexdigest()
-      @flag.hash = hash
+      @flag.secret = hash
     end
 
     if params[:value] != ""
